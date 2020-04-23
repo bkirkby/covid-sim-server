@@ -1,33 +1,22 @@
 const express = require('express')
-const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy;
-
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    username.findOne({username: username}, function(err, user) {
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        return done(null, false, { message: 'incorrect username.'})
-      }
-      if (!user.validPassword(password)) {
-        return done(null, false, {message: 'incorrect password'})
-      }
-      return done(null, user)
-    })
-  }
-))
 
 const app = express()
 
 const port = 3000
 
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/hello',
-  failureRedirect: '/login',
-  failureFlash: true
-}))
+function simpleAuth(req, res, next) {
+  if (req.get("Authorization") === process.env.COVIDSIM_AUTHKEY) {
+    next();
+  } else {
+    res.status(403).json({message: "admin key not valid"});
+  }
+}
+
+app.post('/login',  simpleAuth,
+  function(req, res) {
+    res.json({username:'bk',email:'bkirkby@'})
+  }
+)
 
 app.get('/hello', (req, res) => {
   res.send('hello, world!')
