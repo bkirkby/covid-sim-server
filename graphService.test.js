@@ -37,7 +37,6 @@ test('addGraphToAvg adds a graph to average, new array is larger', async functio
     infected_array: new_infected_array,
     immune_array: new_immune_array
   })
-  console.log('bk: graphService.test.js: test: newAvgGraph: ', newAvgGraph)
   expect(newAvgGraph.total_runs).toBe(2)
   expect(newAvgGraph.healthy_array.length).toBe(5)
   expect(newAvgGraph.healthy_array[0]).toBe(198)
