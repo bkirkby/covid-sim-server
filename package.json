@@ -4,7 +4,7 @@
   "description": "server for consolidating covid sims",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "jest"
   },
   "author": "brian kirkby",
   "license": "ISC",
@@ -12,5 +12,10 @@
     "aws-sdk": "^2.661.0",
     "express": "^4.17.1",
     "sha1": "^1.1.1"
+  },
+  "devDependencies": {
+    "aws-sdk-mock": "^5.1.0",
+    "jest": "^25.4.0",
+    "sinon": "^9.0.2"
   }
 }
