@@ -15,7 +15,6 @@ async function addGraphToAvg({
   infected_array: add_infected_array=[]})
 {
   let avgGraph = await getAvgGraph({isolation, social_distance, population})
-  // console.log('bk: graphService.js: addGraphToAvg: avgGraph: ', avgGraph)
 
   avgGraph = {
     ...avgGraph,
@@ -71,7 +70,7 @@ async function addGraphToAvg({
   }
 
   // save to database
-  return avgGraph
+  return await putAvgGraph(avgGraph)
 }
 
 function putAvgGraph({
@@ -81,7 +80,8 @@ function putAvgGraph({
   dead_array,
   immune_array,
   healthy_array,
-  infected_array})
+  infected_array,
+  total_runs})
 {
   const vars_hash = hashGraph({isolation, social_distance, population})
   const params = {
@@ -93,7 +93,8 @@ function putAvgGraph({
       dead_array,
       immune_array,
       healthy_array,
-      infected_array
+      infected_array,
+      total_runs
     },
     TableName: "covid_sim_graph_run_avg"
   }
@@ -103,7 +104,7 @@ function putAvgGraph({
       if (err) {
         reject(err)
       } else {
-        resolve(data)
+        resolve(params.Item)
       }
     })
   })

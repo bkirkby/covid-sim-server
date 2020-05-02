@@ -29,6 +29,19 @@ test('addGraphToAvg adds a graph to average, new array is larger', async functio
       total_runs: 1
     }})
   })
+  AWSMock.mock('DynamoDB.DocumentClient', 'put', (params, callback) => {
+    callback(null, {
+      Item: {
+        ...graphParams,
+        healthy_array: [198,196,97,97,96],
+        dead_array: [0,0,0,0,0],
+        infected_array: [2,4,3,3,2],
+        immune_array: [0,0,0,0,2],
+        total_runs: 2,
+        vars_hash: graphHash
+      }
+    })
+  })
 
   const newAvgGraph = await graphService.addGraphToAvg({
     ...graphParams,
