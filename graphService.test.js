@@ -77,6 +77,6 @@ test('getAvgGraph returns an item', async function() {
     }})
   })
   const item = await graphService.getAvgGraph(graphParams);
-  expect(item.population).toBe(1);
+  expect(item.population).toBe(0);
   AWSMock.restore('DynamoDB.DocumentClient');
 })
