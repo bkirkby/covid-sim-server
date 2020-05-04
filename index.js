@@ -2,7 +2,7 @@ const express = require('express')
 
 const app = express()
 
-const port = 3000
+const port = 8081
 
 function simpleAuth(req, res, next) {
   if (req.get("Authorization") === process.env.COVIDSIM_AUTHKEY) {

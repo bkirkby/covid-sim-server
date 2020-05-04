@@ -4,7 +4,8 @@
   "description": "server for consolidating covid sims",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node ./index.js"
   },
   "author": "brian kirkby",
   "license": "ISC",
