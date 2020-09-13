@@ -1,6 +1,5 @@
 const docClient = require('../aws').getDocClient()
-//const config = new AWS.Config({region: "us-east-1"});
-//const dynamoDb = new AWS.DynamoDB(config);
+require('dotenv').config()
 
 var params = {
   Item: {

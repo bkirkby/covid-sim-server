@@ -1,9 +1,8 @@
 const AWS = require("aws-sdk");
+const config = require('./configService').getConfig()
 
-var ddb = new AWS.DynamoDB({region: 'us-east-1'});
 function getDocClient() {
-  return new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
+  return new AWS.DynamoDB.DocumentClient(config.AWS_CONFIG);
 }
 
- exports.ddb = ddb;
  exports.getDocClient = getDocClient;

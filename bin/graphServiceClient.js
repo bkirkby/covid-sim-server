@@ -1,4 +1,5 @@
 const graphService = require('../graphService');
+require('dotenv').config();
 
 // graphService.addGraphToAvg({population:100,social_distance:4.5,isolation:.2})
 

@@ -1,10 +1,16 @@
 const express = require('express')
+const morgan = require('morgan')
+const logger = require('./logger')
+require('dotenv').config()
 
 const app = express()
 
-const port = 3000
+const port = 8081
+
+app.use(morgan('tiny'))
 
 function simpleAuth(req, res, next) {
+  logger.debug('simpleAuth called')
   if (req.get("Authorization") === process.env.COVIDSIM_AUTHKEY) {
     next();
   } else {
@@ -12,9 +18,9 @@ function simpleAuth(req, res, next) {
   }
 }
 
-app.post('/login',  simpleAuth,
+app.get('/login',  simpleAuth,
   function(req, res) {
-    res.json({username:'bk',email:'bkirkby@'})
+    res.json({status:'ok'})
   }
 )
 
