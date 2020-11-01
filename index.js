@@ -8,12 +8,11 @@ require('dotenv').config()
 const corsWhiteList = [
   'http://localhost:3000',
   'http://localhost:3001',
-  'https://covidsim.now.sh', 
+  'https://covidsim.now.sh',
   undefined
 ];
 const corsOptions = {
   origin: (origin, callback) => {
-    console.log('bk: index.js: corsOptions: origin: ', origin)
     if (corsWhiteList.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -34,13 +33,13 @@ function simpleAuth(req, res, next) {
   if (req.get("Authorization") === process.env.COVIDSIM_AUTHKEY) {
     next();
   } else {
-    res.status(403).json({error: "admin key not valid"});
+    res.status(403).json({ error: "admin key not valid" });
   }
 }
 
 app.post('/getGraph', simpleAuth, async (req, res) => {
   if (!req.body.isolation, !req.body.social_distance, !req.body.population) {
-    res.status(400).json({message: "required params not found: isolation, social_distance, or population"});
+    res.status(400).json({ message: "required params not found: isolation, social_distance, or population" });
   }
   const graph_data = await graphService.getAvgGraph(req.body);
   res.status(200).json(graph_data);
@@ -53,7 +52,16 @@ app.post('/addGraph', (req, res) => {
 
 app.get('/getGraphList', simpleAuth, async (req, res) => {
   const graph_data = await graphService.getGraphList().catch(err => {
-    res.status(500).json({error: err});
+    res.status(500).json({ error: err });
+  });
+  res.status(200).json(graph_data);
+})
+
+app.get('/searchGraphListByPopulation', simpleAuth, async (req, res) => {
+  const population = parseInt(req.query.population, 10);
+
+  const graph_data = await graphService.searchGraphListByPopulation(population).catch(err => {
+    res.status(500).json({ error: err });
   });
   res.status(200).json(graph_data);
 })

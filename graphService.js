@@ -2,8 +2,9 @@ const sha1 = require("sha1");
 const logger = require('./logger');
 const getDocClient = require("./aws").getDocClient;
 
-function hashGraph({isolation,population,social_distance}) {
-  return sha1(JSON.stringify({isolation,population,social_distance}))
+function compositeGraph({ isolation, social_distance }) {
+  // return sha1(JSON.stringify({ isolation, social_distance }))
+  return `${isolation}-${social_distance}`;
 }
 
 async function addGraphToAvg({
@@ -14,12 +15,8 @@ async function addGraphToAvg({
   immune_array,
   healthy_array,
   infected_array
-})
-{
-  let avgGraph = await getAvgGraph({isolation, social_distance, population})
-
-  // logger.debug('addGraphToAvg: result of getAvgGraph: avgGraph: ', avgGraph)
-  console.log('addGraphToAvg: result of getAvgGraph: avgGraph: ', avgGraph)
+}) {
+  let avgGraph = await getAvgGraph({ isolation, social_distance, population })
 
   avgGraph = {
     ...avgGraph,
@@ -44,28 +41,28 @@ async function addGraphToAvg({
 
   avgGraph = {
     ...avgGraph,
-    healthy_array: larger_healthy_array.map((metric,idx) => {
+    healthy_array: larger_healthy_array.map((metric, idx) => {
       if (smaller_healthy_array[idx] === undefined) {
         return metric
       } else {
         return metric + smaller_healthy_array[idx]
       }
     }),
-    immune_array: larger_immune_array.map((metric,idx) => {
+    immune_array: larger_immune_array.map((metric, idx) => {
       if (smaller_immune_array[idx] === undefined) {
         return metric
       } else {
         return metric + smaller_immune_array[idx]
       }
     }),
-    infected_array: larger_infected_array.map((metric,idx) => {
+    infected_array: larger_infected_array.map((metric, idx) => {
       if (smaller_infected_array[idx] === undefined) {
         return metric
       } else {
         return metric + smaller_infected_array[idx]
       }
     }),
-    dead_array: larger_dead_array.map((metric,idx) => {
+    dead_array: larger_dead_array.map((metric, idx) => {
       if (smaller_dead_array[idx] === undefined) {
         return metric
       } else {
@@ -86,12 +83,11 @@ function putAvgGraph({
   immune_array,
   healthy_array,
   infected_array,
-  total_runs})
-{
-  const vars_hash = hashGraph({isolation, social_distance, population})
+  total_runs }) {
+  const vars_composite = compositeGraph({ isolation, social_distance })
   const params = {
     Item: {
-      vars_hash,
+      vars_composite,
       isolation,
       social_distance,
       population,
@@ -104,12 +100,45 @@ function putAvgGraph({
     TableName: "covid_sim_graph_run_avg"
   }
 
-  return new Promise(function(resolve, reject) {
-    getDocClient().put(params, function(err, data) {
+  return new Promise(function (resolve, reject) {
+    getDocClient().put(params, function (err, data) {
       if (err) {
         reject(err)
       } else {
         resolve(params.Item)
+      }
+    })
+  })
+}
+
+function searchGraphListByPopulation(population) {
+  const params = {
+    TableName: "covid_sim_graph_run_avg",
+    KeyConditionExpression: "#vars_composite >= :zero and #pop = :n",
+    ExpressionAttributeNames: {
+      "#pop": "population",
+      "#vars_composite": "vars_composite"
+    },
+    ExpressionAttributeValues: {
+      ":zero": "0",
+      ":n": population,
+    }
+  }
+
+  return new Promise(function (resolve, reject) {
+    getDocClient().query(params, function (err, data) {
+      if (err) {
+        logger.error("unable to query table", err);
+        reject(`unable to query table: ${err}`);
+      } else {
+        const ret_items = data.Items.map(({ isolation, population, social_distance }) => {
+          return {
+            isolation,
+            population,
+            social_distance
+          }
+        })
+        resolve(ret_items);
       }
     })
   })
@@ -120,13 +149,12 @@ function getGraphList() {
     TableName: "covid_sim_graph_run_avg"
   }
 
-  return new Promise(function(resolve,reject) {
-    getDocClient().scan(params, function(err, data) {
+  return new Promise(function (resolve, reject) {
+    getDocClient().scan(params, function (err, data) {
       if (err) {
         logger.error('unable to scan table');
         reject(`unable to scan table: ${err}`);
       } else {
-        console.log('bk: graphService.js: getAvgGraph: ddb.scan: data: ', data);
         const ret_items = data.Items.map(item => {
           return {
             isolation: item.isolation,
@@ -140,26 +168,24 @@ function getGraphList() {
   })
 }
 
-function getAvgGraph({isolation, social_distance, population}) {
-  const vars_hash = hashGraph({isolation, social_distance, population})
+function getAvgGraph({ isolation, social_distance, population }) {
+  const vars_composite = compositeGraph({ isolation, social_distance })
   const params = {
-    Key: {vars_hash},
+    Key: { population, vars_composite },
     TableName: "covid_sim_graph_run_avg"
   }
 
-  return new Promise(function(resolve,reject) {
-    getDocClient().get(params, function(err, data) {
+  return new Promise(function (resolve, reject) {
+    getDocClient().get(params, function (err, data) {
       if (err) {
-        // console.log('bk: graphService.js: getAvgGraph: ddb.getItem: err: ', err)
         logger.error('unable to get avgGraph for isolation, social_distance, population: ',
           isolation, social_distance, population);
         reject(err)
       } else {
-        console.log('bk: graphService.js: getAvgGraph: ddb.getItem: data: ', data)
         let item = data.Item;
         if (!item) {
           item = {
-            vars_hash,
+            vars_composite,
             total_runs: 0,
             population,
             social_distance,
@@ -179,5 +205,6 @@ function getAvgGraph({isolation, social_distance, population}) {
 exports.getAvgGraph = getAvgGraph;
 exports.putAvgGraph = putAvgGraph;
 exports.addGraphToAvg = addGraphToAvg;
-exports.hashGraph = hashGraph;
+exports.compositeGraph = compositeGraph;
 exports.getGraphList = getGraphList;
+exports.searchGraphListByPopulation = searchGraphListByPopulation;
