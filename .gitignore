@@ -1,5 +1,5 @@
 node_modules/
+build/
 .env
 server.cert
 server.key
-covid-sim-server-*.tgz
