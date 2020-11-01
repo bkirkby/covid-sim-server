@@ -1,9 +1,7 @@
-const sha1 = require("sha1");
 const logger = require('./logger');
 const getDocClient = require("./aws").getDocClient;
 
 function compositeGraph({ isolation, social_distance }) {
-  // return sha1(JSON.stringify({ isolation, social_distance }))
   return `${isolation}-${social_distance}`;
 }
 
@@ -97,7 +95,7 @@ function putAvgGraph({
       infected_array,
       total_runs
     },
-    TableName: "covid_sim_graph_run_avg"
+    TableName: process.env.DDB_COVIDSIM_DATABASE_NAME
   }
 
   return new Promise(function (resolve, reject) {
@@ -113,7 +111,7 @@ function putAvgGraph({
 
 function searchGraphListByPopulation(population) {
   const params = {
-    TableName: "covid_sim_graph_run_avg",
+    TableName: process.env.DDB_COVIDSIM_DATABASE_NAME,
     KeyConditionExpression: "#vars_composite >= :zero and #pop = :n",
     ExpressionAttributeNames: {
       "#pop": "population",
@@ -146,7 +144,7 @@ function searchGraphListByPopulation(population) {
 
 function getGraphList() {
   const params = {
-    TableName: "covid_sim_graph_run_avg"
+    TableName: process.env.DDB_COVIDSIM_DATABASE_NAME
   }
 
   return new Promise(function (resolve, reject) {
@@ -172,7 +170,7 @@ function getAvgGraph({ isolation, social_distance, population }) {
   const vars_composite = compositeGraph({ isolation, social_distance })
   const params = {
     Key: { population, vars_composite },
-    TableName: "covid_sim_graph_run_avg"
+    TableName: process.env.DDB_COVIDSIM_DATABASE_NAME
   }
 
   return new Promise(function (resolve, reject) {

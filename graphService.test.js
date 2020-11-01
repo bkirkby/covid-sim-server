@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk')
 const AWSMock = require('aws-sdk-mock')
 const graphService = require("./graphService")
+require('dotenv').config()
 
 test('compositeGraph properly composes', function () {
   const expected = "0-0";
@@ -77,7 +78,7 @@ test('getAvgGraph returns an item', async function () {
 
 const _setupSearchMock = (population) => {
   AWSMock.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-    expect(params.TableName).toBe('covid_sim_graph_run_avg');
+    expect(params.TableName).toBe(process.env.DDB_COVIDSIM_DATABASE_NAME);
     expect(params.KeyConditionExpression).toBe("#vars_composite >= :zero and #pop = :n");
     expect(params.ExpressionAttributeValues[':n']).toBe(population);
     callback(null, {

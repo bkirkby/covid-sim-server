@@ -1,9 +1,21 @@
 const express = require('express')
 const morgan = require('morgan')
 const logger = require('./logger')
-var cors = require('cors')
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+const cors = require('cors')
 const graphService = require('./graphService')
 require('dotenv').config()
+
+const environment = process.env.NODE_ENV || 'development';
+
+let credentials;
+if (environment != 'development') {
+  const privateKey = fs.readFileSync(process.env.COVID_SERVER_CERT_KEY, 'utf8');
+  const certificate = fs.readFileSync(process.env.COVID_SERVER_CERT_FILE, 'utf8');
+  credentials = { key: privateKey, cert: certificate };
+}
 
 const corsWhiteList = [
   'http://localhost:3000',
@@ -23,7 +35,9 @@ const corsOptions = {
 
 const app = express()
 
-const port = 8081
+const port = process.env.COVID_SERVER_PORT ? process.env.COVID_SERVER_PORT : 8081
+const securePort = process.env.COVID_SERVER_SECUREPORT ? process.env.COVID_SERVER_SECUREPORT : 8043
+
 app.use(express.json())
 app.use(morgan('tiny'))
 app.use(cors(corsOptions))
@@ -76,4 +90,16 @@ app.post('/login', (req, res) => {
   }
 })
 
-app.listen(port, () => console.log(`app running on port ${port}`))
+const httpServer = http.createServer(app);
+httpServer.listen(port);
+console.log(`server started on ${httpServer.address().address}:${httpServer.address().port}`);
+
+if (environment !== 'development') {
+  const httpsServer = https.createServer(credentials, app);
+  httpsServer.listen(securePort);
+  console.log(`secure server started on ${httpsServer.address().address}:${httpsServer.address().port}`);
+}
+
+// const server = app.listen(port, () => {
+//   console.log(`app running on ${server.address().address}:${server.address().port}`);
+// });
