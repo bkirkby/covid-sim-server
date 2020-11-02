@@ -3,19 +3,11 @@ const morgan = require('morgan')
 const logger = require('./logger')
 const fs = require('fs');
 const http = require('http');
-const https = require('https');
 const cors = require('cors')
 const graphService = require('./graphService')
 require('dotenv').config()
 
 const environment = process.env.NODE_ENV || 'development';
-
-let credentials;
-if (environment != 'development') {
-  const privateKey = fs.readFileSync(process.env.COVID_SERVER_CERT_KEY, 'utf8');
-  const certificate = fs.readFileSync(process.env.COVID_SERVER_CERT_FILE, 'utf8');
-  credentials = { key: privateKey, cert: certificate };
-}
 
 const corsWhiteList = [
   'http://localhost:3000',
@@ -90,16 +82,10 @@ app.post('/login', (req, res) => {
   }
 })
 
+app.get('/health-check', (req, res) => {
+  res.status(200).json({ status: 'healthy' });
+})
+
 const httpServer = http.createServer(app);
 httpServer.listen(port);
 console.log(`server started on ${httpServer.address().address}:${httpServer.address().port}`);
-
-if (environment !== 'development') {
-  const httpsServer = https.createServer(credentials, app);
-  httpsServer.listen(securePort);
-  console.log(`secure server started on ${httpsServer.address().address}:${httpsServer.address().port}`);
-}
-
-// const server = app.listen(port, () => {
-//   console.log(`app running on ${server.address().address}:${server.address().port}`);
-// });

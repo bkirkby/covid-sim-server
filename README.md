@@ -34,8 +34,8 @@ aws dynamodb create-table --billing-mode PAY_PER_REQUEST \
   * ADMIN_USER=admin_user
   * ADMIN_PASSWORD=password
   * COVID_SERVER_PORT=8081
-  * COVID_SERVER_SECUREPORT=8043
   * DDB_COVIDSIM_DATABASE_NAME=dev_covid_sim_graph_run_avg
+  * NODE_ENV=development
 * open a console window and start the covid sim admin client by entering `yarn start`
 
 the server should show a message about what port it will be running on
@@ -48,10 +48,6 @@ installed in a server of your choice.
 the pre-requisites for the server to install this application on are:
 * node.js must be installed on the server
 * must be able to unpack packed node.js application
-* the server must have signed certificates for https (tls) communication
-  1. to create a self-signed cert do the follow:
-  2. `openssl req -nodes -new -x509 -keyout server.key -out server.cert`
-  3. follow the prompts to create a key cert. use (this guide)[https://flaviocopes.com/express-https-self-signed-certificate/] if you need help.
 * the server must be reachable by ip address and whatever port number(s) you specify in the .env file. make sure to record the ip address.
 
 ## install instructions
@@ -60,9 +56,8 @@ the pre-requisites for the server to install this application on are:
 2. scp the `covid-sim-server-1.0.0.tgz` file to your prepared server
 3. when your packed file is on your server, unpack the file with `tar -xvzf covid-sim-server-1.0.0.tgz`
 4. change into the "package" directory: `cd package`
-5. install the npm modules: `npm install`
+5. install the npm modules: `npm install --production`
 6. install the pm2 npm module: `npm install -g pm2`
 8. configure the server by creating a .env file
-  * you _must_ have a cert file with key and configure the .env with those values
-  * if you dont specify ports, the defaults for non-secure and secure servers will be 8081 and 8043 respectively.
+  * if you dont specify a port, the default will be 8081.
 9. start the server in the background and managed by pm2: `pm2 start ./index.js`
