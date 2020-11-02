@@ -14,7 +14,6 @@ const corsWhiteList = [
   'http://localhost:3001',
   'https://covidsim.now.sh',
   undefined
-];
 const corsOptions = {
   origin: (origin, callback) => {
     if (corsWhiteList.indexOf(origin) !== -1) {
