@@ -774,10 +774,10 @@ aws-sdk-mock@^5.1.0:
     sinon "^9.0.1"
     traverse "^0.6.6"
 
-aws-sdk@^2.637.0, aws-sdk@^2.661.0:
-  version "2.756.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.756.0.tgz#87ec4e2a03ed838de6d7b0ce6a62f276e318b4fc"
-  integrity sha512-Hk6DzcsXq1WRg+UVHDH56iQz31kDtg/NRqtJL1A0BrZ/PtNSLTHsQQllpcAi09UxLDMzBoDXymZ8kYg0Migq8w==
+aws-sdk@^2.637.0, aws-sdk@^2.814.0:
+  version "2.814.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.814.0.tgz#7a1c36006e0b5826f14bd2511b1d229ef6814bb0"
+  integrity sha512-empd1m/J/MAkL6d9OeRpmg9thobULu0wk4v8W3JToaxGi2TD7PIdvE6yliZKyOVAdJINhBWEBhxR4OUIHhcGbQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -1039,11 +1039,6 @@ chalk@^3.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-"charenc@>= 0.0.1":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
-  integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
-
 ci-info@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
@@ -1222,11 +1217,6 @@ cross-spawn@^7.0.0:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
-
-"crypt@>= 0.0.1":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/crypt/-/crypt-0.0.2.tgz#88d7ff7ec0dfb86f713dc87bbb42d044d3e6c41b"
-  integrity sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs=
 
 cssom@^0.4.1:
   version "0.4.4"
@@ -3545,14 +3535,6 @@ setprototypeof@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.1.1.tgz#7e95acb24aa92f5885e0abef5ba131330d4ae683"
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
-
-sha1@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/sha1/-/sha1-1.1.1.tgz#addaa7a93168f393f19eb2b15091618e2700f848"
-  integrity sha1-rdqnqTFo85PxnrKxUJFhjicA+Eg=
-  dependencies:
-    charenc ">= 0.0.1"
-    crypt ">= 0.0.1"
 
 shebang-command@^1.2.0:
   version "1.2.0"
